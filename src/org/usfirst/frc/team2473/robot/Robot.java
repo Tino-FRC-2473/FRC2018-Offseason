@@ -7,17 +7,14 @@
 
 package org.usfirst.frc.team2473.robot;
 
+import org.usfirst.frc.team2473.robot.commands.PointTurn;
+import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.usfirst.frc.team2473.framework.Devices;
-import org.usfirst.frc.team2473.robot.commands.DriveForDistanceCommand;
-import org.usfirst.frc.team2473.robot.commands.PointTurn;
-import org.usfirst.frc.team2473.robot.subsystems.DrivePower;
-import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
 	

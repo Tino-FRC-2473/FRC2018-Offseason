@@ -7,34 +7,32 @@
 
 package org.usfirst.frc.team2473.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
-import org.usfirst.frc.team2473.robot.subsystems.DrivePower;
-import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveForDistanceCommand extends Command {
 	
-	private static DrivePower SLOW_POWER = new DrivePower(0.1, 0.1, 0.1, 0.1);
+	private static double SLOW_POWER = 0.1;
 	
 	private double inches;
-	private double ticks; // should not be set directly
+	private double ticks;
 	
 	private int prevTicks;
 	
-	private DrivePower power;
+	private double power;
 
 	public boolean finished;
 	
-	public DriveForDistanceCommand(double inches, DrivePower power) {
-		// Use requires() here to declare subsystem dependencies
+	public DriveForDistanceCommand(double inches, double power) {
 		requires(Robot.driveSubsystem);
 		
 		setDistance(inches);
 		this.power = power;
 	}
 	
-	public void setPower(DrivePower power) {
+	public void setPower(double power) {
 		this.power = power;
 	}
 
@@ -43,39 +41,33 @@ public class DriveForDistanceCommand extends Command {
 		this.ticks = this.inches * RobotMap.K_TICKS_PER_INCH;
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		Robot.driveSubsystem.drive(power);
+		Robot.driveSubsystem.drive(power, power, power, power);
 		prevTicks = 0;
 		finished = false;
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		DrivePower tempPower = power;
-		int currTicks = Math.abs(Robot.driveSubsystem.getAverageEncoderTicks());
+		double tempPower = power;
+		int currTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
 		
 		int delta = currTicks - prevTicks;
 		if (ticks - (currTicks + delta) < RobotMap.K_ENCODER_THRESHOLD) {
 			tempPower = SLOW_POWER;
 		}
-		Robot.driveSubsystem.drive(tempPower);
+		Robot.driveSubsystem.drive(0.1 ,0.1, 0.1, 0.1);
 		prevTicks = currTicks;
-		
 		
 	}
 
-
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
-		int currTicks = Math.abs(Robot.driveSubsystem.getAverageEncoderTicks());
+		int currTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
 		return (ticks < currTicks);		
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 		System.out.println(power);
@@ -89,8 +81,6 @@ public class DriveForDistanceCommand extends Command {
 		Robot.driveSubsystem.stopMotors();
 	}
 
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
 		Robot.driveSubsystem.stopMotors();

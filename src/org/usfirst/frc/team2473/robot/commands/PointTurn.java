@@ -7,81 +7,81 @@
 
 package org.usfirst.frc.team2473.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
-
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
-import org.usfirst.frc.team2473.robot.subsystems.DrivePower;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 
 public class PointTurn extends Command {
 	
 	private static double SLOW_POWER = 0.1;
-	private DrivePower slowDrivePower;
 	
-	private DrivePower power;
+	private double leftPower;
+	private double rightPower;
+	private double leftPowerSlow;
+	private double rightPowerSlow;
 	
 	private double prevDegrees;
 	private double degreesGoal;
 	
 	public PointTurn(double degrees, double power) {
-		// Use requires() here to declare subsystem dependencies
 		requires(Robot.driveSubsystem);
 		
-		power = Math.abs(power);
+		if (power < 0) {
+			throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
+		}
 		
-		this.power = degrees < 0 ? new DrivePower(-power, power, -power, power) :
-			new DrivePower(power, -power, power, -power);
+		this.leftPower = degrees < 0 ? -power : power;
+		this.rightPower = -leftPower;
+		
+		this.leftPowerSlow = degrees < 0 ? -SLOW_POWER : SLOW_POWER;
+		this.rightPowerSlow = -leftPowerSlow;
 		
 		prevDegrees = Devices.getInstance().getNavXGyro().getAngle();
 		this.degreesGoal = prevDegrees + degrees;
 		
-		slowDrivePower = degrees < 0 ? new DrivePower(-SLOW_POWER, SLOW_POWER, -SLOW_POWER, SLOW_POWER): 
-			new DrivePower(SLOW_POWER, -SLOW_POWER, SLOW_POWER, -SLOW_POWER);
-		
 	}
 	
-	public void setPower(DrivePower power) {
-		this.power = power;
+	public void setPower(double power) {
+		if (power < 0) {
+			throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
+		}
+		this.leftPower = leftPower < 0 ? -power : power;
+		this.rightPower = -leftPower;
+		
 	}
 
-	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		Robot.driveSubsystem.drive(power);
+		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		DrivePower tempPower = power;
 		double currDegrees = Devices.getInstance().getNavXGyro().getAngle();
-		
 		double delta = currDegrees - prevDegrees;
-		if (degreesGoal - (currDegrees + delta) < RobotMap.K_DEGREE_THRESHOLD) {
-			tempPower = slowDrivePower;
+		boolean slow = degreesGoal - (currDegrees + delta) < RobotMap.K_DEGREE_THRESHOLD;
+		if (slow) {
+			Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
+		} else {
+			Robot.driveSubsystem.drive(leftPowerSlow, leftPowerSlow, rightPowerSlow, rightPowerSlow);
 		}
-		Robot.driveSubsystem.drive(tempPower);
 		prevDegrees = currDegrees;
-		
 		
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	protected boolean isFinished() {
 		return (Devices.getInstance().getNavXGyro().getAngle() > degreesGoal);		
 	}
 
-	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 		Robot.driveSubsystem.stopMotors();
 	}
 
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
 		Robot.driveSubsystem.stopMotors();
