@@ -74,7 +74,12 @@ public class PointTurn extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return (Devices.getInstance().getNavXGyro().getAngle() > degreesGoal);		
+		double currAngle = Devices.getInstance().getNavXGyro().getAngle();
+		if (prevDegrees < degreesGoal) { // turn right
+			return currAngle > degreesGoal;
+		} else { // turn left
+			return currAngle < degreesGoal;
+		}
 	}
 
 	@Override
