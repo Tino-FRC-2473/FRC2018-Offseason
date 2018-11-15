@@ -62,7 +62,7 @@ public class PointTurn extends Command {
 	protected void execute() {
 		double currDegrees = Devices.getInstance().getNavXGyro().getAngle();
 		double delta = currDegrees - prevDegrees;
-		boolean slow = degreesGoal - (currDegrees + delta) < RobotMap.K_DEGREE_THRESHOLD;
+		boolean slow = Math.abs(degreesGoal - (currDegrees + delta) < RobotMap.K_DEGREE_THRESHOLD);
 		if (slow) {
 			Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 		} else {
