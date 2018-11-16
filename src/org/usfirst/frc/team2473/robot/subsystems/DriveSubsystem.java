@@ -81,7 +81,6 @@ public class DriveSubsystem extends Subsystem {
 			
 			if (powers.contains(power)) { // the input power is one of the powers in the lookup table
 				double newPower = power * 1/tempTable.get(power);
-				System.out.println("Power is exact! No linearization required. Old power: " + power + " ||| New Power: " + newPower);
 				return newPower;
 			}
 			
@@ -108,9 +107,10 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void drive(double bl, double fl, double br, double fr) {
 		backLeft.set(convertPower(bl, true));
-		backRight.set(convertPower(br, false));
+		backRight.set(convertPower(-br, false));
 		frontLeft.set(convertPower(fl, true));
-		frontRight.set(convertPower(fr, false));
+		frontRight.set(convertPower(-fr, false));
+		System.out.println(backLeft.get()+" "+backRight.get());
 	}
 	
 	public void stopMotors() {

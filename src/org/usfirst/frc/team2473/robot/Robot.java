@@ -7,10 +7,12 @@
 
 package org.usfirst.frc.team2473.robot;
 
+import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.PointTurn;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -57,14 +59,13 @@ public class Robot extends TimedRobot {
 		
 		SmartDashboard.putData("Power", powerChooser);
 		SmartDashboard.putData("Distance", distanceChooser);
+		
+		Devices.getInstance().getNavXGyro().reset();
 	}
 	
 
 	@Override
 	public void disabledInit() {
-		System.out.println("---------- BEFORE STOP --------------");
-		driveSubsystem.printEncoders();
-		System.out.println("Difference: " + driveSubsystem.encoderDifference());
 	}
 
 	@Override
@@ -77,16 +78,15 @@ public class Robot extends TimedRobot {
 		//double power = powerChooser.getSelected();
 		//int distance = distanceChooser.getSelected();
 		driveSubsystem.resetEncoders();
-		driveSubsystem.resetEncoders();
 		//new DriveForDistanceCommand(distance, new DrivePower(-power)).start();
-		new PointTurn(45, 0.5).start();
+		new PointTurn(270, 0.3).start();
 
 		
 	}
 
 
 	@Override
-	public void autonomousPeriodic() {
+	public void autonomousPeriodic() {		
 		Scheduler.getInstance().run();
 	}
 
