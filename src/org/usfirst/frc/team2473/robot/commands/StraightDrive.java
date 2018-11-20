@@ -12,7 +12,7 @@ import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveForDistanceCommand extends Command {
+public class StraightDrive extends Command {
 	
 	private static double SLOW_POWER = 0.1;
 	
@@ -25,7 +25,7 @@ public class DriveForDistanceCommand extends Command {
 
 	public boolean finished;
 	
-	public DriveForDistanceCommand(double inches, double power) {
+	public StraightDrive(double inches, double power) {
 		requires(Robot.driveSubsystem);
 		
 		setDistance(inches);
