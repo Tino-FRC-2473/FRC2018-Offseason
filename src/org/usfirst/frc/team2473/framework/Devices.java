@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  * @version 1.0
  */
 public class Devices {
-	private ArrayList<RobotTalon> talons; //collection of talons
+	private ArrayList<WPI_TalonSRX> talons; //collection of talons
 	private AnalogGyro[] analog_gyros; //collection storing the singular gryo, size could be subject to change in the future if needed
 	private AHRS navX; //collection storing the singular navx gyro, size subject to change in the future
 	private ArrayList<AnalogInput> analogs; //collection of analog input sensors
@@ -37,7 +37,7 @@ public class Devices {
 	}
 		
 	private Devices() { //private constructor prevents the creation of such an object elsewhere, forcing the use of the public static getInstance()
-		talons = new ArrayList<RobotTalon>();
+		talons = new ArrayList<WPI_TalonSRX>();
 		analog_gyros = new AnalogGyro[1];
 		setNavXGyro();
 		analogs = new ArrayList<AnalogInput>();
@@ -88,10 +88,10 @@ public class Devices {
 	 * @param id an <code>int</code> value representing the device id of the talon
 	 */
 	public void addTalon(int id) {
-		talons.add(new RobotTalon(id));
+		talons.add(new WPI_TalonSRX(id));
 	}
 
-	public ArrayList<RobotTalon> getTalons() {
+	public ArrayList<WPI_TalonSRX> getTalons() {
 		return talons;
 	}
 	/**
