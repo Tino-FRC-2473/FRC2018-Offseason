@@ -87,24 +87,22 @@ public class DriveSubsystem extends Subsystem {
 			int i = 0;
 			while(powers.get(i) < power) i++;
 			i--;
-			double lowerBound = powers.get(i); //the largest power value that is lower than the power input in the lookup table
-			double upperBound = powers.get(i+1); //the smallest power value that is greater than the power input in the lookup table
+			double lowerNearestPower = powers.get(i); //the largest power value that is lower than the power input in the lookup table
+			double higherNearestPower = powers.get(i+1); //the smallest power value that is greater than the power input in the lookup table
 			
-			double lowerValue = tempTable.get(lowerBound); 
-			double upperValue = tempTable.get(upperBound); 
+			double calibrationRatioOfLowerPower = tempTable.get(lowerNearestPower); 
+			double calibrationRatioOfHigherPower = tempTable.get(higherNearestPower); 
 			
-			return power*(1/lowerValue);
-			
-			/*
-			// NOT FINISHED
-			double ratio = (power - lowerBound) / (upperBound - lowerBound); // where the input power is relative to the tested power bounds
+			//return power*(1/calibrationRatioOfLowerPower);
 			
 			
-			double difference = 1/(upperValue - lowerValue); //the change of lookup ratio between the two bounds
+			double slope = (calibrationRatioOfHigherPower-calibrationRatioOfLowerPower) / (higherNearestPower-lowerNearestPower);
 			
-			double multiplier = lowerValue + difference * ratio;
+			double deltaPower = power - lowerNearestPower; //the change of lookup ratio between the two bounds
 			
-			return power * multiplier;*/
+			double powerCalibration = calibrationRatioOfLowerPower + slope * deltaPower;
+			
+			return power * 1/powerCalibration;
 		}
 	}
 	
