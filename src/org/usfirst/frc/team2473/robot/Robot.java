@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
+		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
+		
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class Robot extends TimedRobot {
 		//int distance = distanceChooser.getSelected();
 		driveSubsystem.resetEncoders();
 		//new DriveForDistanceCommand(distance, new DrivePower(-power)).start();
-		new PointTurn(270, 0.3).start();
+		new PointTurn(90, 0.3).start();
 
 		
 	}
