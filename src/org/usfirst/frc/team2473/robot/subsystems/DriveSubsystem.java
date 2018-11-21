@@ -93,6 +93,9 @@ public class DriveSubsystem extends Subsystem {
 			double lowerValue = tempTable.get(lowerBound); 
 			double upperValue = tempTable.get(upperBound); 
 			
+			return power*(1/lowerValue);
+			
+			/*
 			// NOT FINISHED
 			double ratio = (power - lowerBound) / (upperBound - lowerBound); // where the input power is relative to the tested power bounds
 			
@@ -101,7 +104,7 @@ public class DriveSubsystem extends Subsystem {
 			
 			double multiplier = lowerValue + difference * ratio;
 			
-			return power * multiplier;
+			return power * multiplier;*/
 		}
 	}
 	
