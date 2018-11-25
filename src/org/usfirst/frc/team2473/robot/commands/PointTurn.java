@@ -27,13 +27,9 @@ public class PointTurn extends Command {
 	
 	public PointTurn(double degrees, double power) {
 		requires(Robot.driveSubsystem);
-		
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
 		
 		isClockwise = degrees > 0;
-		
-//		this.leftPower = isClockwise ? power : -power;
-//		this.rightPower = -leftPower;
 		setPower(power);
 		
 		prevAngle = Devices.getInstance().getNavXGyro().getAngle();
@@ -41,18 +37,9 @@ public class PointTurn extends Command {
 		this.angleGoal = prevAngle + degrees;
 	}
 	
-	/**
-	 * 
-	 * @param power
-	 * 
-	 * Doesn't actually change the motor power
-	 */
-	public void setPower(double power) {
+	private void setPower(double power) {
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
-		if (power < 0.15) {
-			System.out.println("FSFDFSFD" + power);
-			power = 0.15;
-		}
+		if (power < 0.1) power = 0.1;
 		this.leftPower = isClockwise ? power : -power;
 		this.rightPower = -leftPower;	
 	}
@@ -68,23 +55,18 @@ public class PointTurn extends Command {
 
 	@Override
 	protected void execute() {
-//		System.out.println("TARGET ANGLE: " + this.angleGoal);
 		double currDegrees = Devices.getInstance().getNavXGyro().getAngle();
-		double angleDiff = isClockwise ? angleGoal-currDegrees : currDegrees-angleGoal;
-		/*if (angleDiff < RobotMap.K_DEGREE_THRESHOLD) {
-			double newPower = getPower()*RobotMap.K_ANGLE_DAMPEN;
-			System.out.println("NEW POWER: " + newPower);
-			setPower(newPower);
-			
-			System.out.println("LEFT POWER: " + leftPower);
-			System.out.println("RIGHT POWER: " + rightPower);
-		}*/
-		System.out.println("adfsfsd POWER: " + getPower());
-		if(angleDiff < RobotMap.K_DEGREE_THRESHOLD) {
+		double degreesToGoal = isClockwise ? angleGoal-currDegrees : currDegrees-angleGoal;
+		
+		if(degreesToGoal < RobotMap.K_DEGREE_THRESHOLD_CRITICAL) {
+			setPower(Math.floor((getPower()*RobotMap.K_ANGLE_DAMPEN_CRITICAL)*100)/100);
+		} else if(degreesToGoal < RobotMap.K_DEGREE_THRESHOLD) {
 			setPower(Math.floor((getPower()*RobotMap.K_ANGLE_DAMPEN)*100)/100);
 		}
-		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
+		
 		prevAngle = currDegrees;
+		
+		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 		
 	}
 
