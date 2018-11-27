@@ -16,7 +16,9 @@ import org.usfirst.frc.team2473.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveSubsystem extends Subsystem {
 	
@@ -35,11 +37,17 @@ public class DriveSubsystem extends Subsystem {
 	WPI_TalonSRX frontLeft;
 	WPI_TalonSRX frontRight;
 	
+	DifferentialDrive teleopDrive;
+	
 	private HashMap<Double, Double> leftTable = new HashMap<>();
 	private HashMap<Double, Double> rightTable = new HashMap<>();
 	private double minTestedPower, maxTestedPower;
 	
 	private DriveSubsystem() {
+		SpeedControllerGroup right = new SpeedControllerGroup(Devices.getInstance().getTalon(RobotMap.TALON_BR), Devices.getInstance().getTalon(RobotMap.TALON_FR));
+		SpeedControllerGroup left = new SpeedControllerGroup(Devices.getInstance().getTalon(RobotMap.TALON_BL), Devices.getInstance().getTalon(RobotMap.TALON_FL));
+		teleopDrive = new DifferentialDrive(right, left);
+		
 		backLeft = Devices.getInstance().getTalon(RobotMap.TALON_BL);
 		backRight = Devices.getInstance().getTalon(RobotMap.TALON_BR);
 		frontLeft = Devices.getInstance().getTalon(RobotMap.TALON_FL);
@@ -104,6 +112,10 @@ public class DriveSubsystem extends Subsystem {
 			
 			return power * 1/powerCalibration;
 		}
+	}
+	
+	public void teleopDrive(double speed, double rotation) {
+		teleopDrive.arcadeDrive(speed, rotation);
 	}
 	
 	public void drive(double bl, double fl, double br, double fr) {
