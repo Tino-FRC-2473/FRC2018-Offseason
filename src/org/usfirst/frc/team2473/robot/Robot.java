@@ -54,12 +54,12 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Power", powerChooser);
 		SmartDashboard.putData("Distance", distanceChooser);
 		
-		UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
-		camera0.setBrightness(75);
-		camera0.setResolution(640, 480);
-		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
-		camera.setBrightness(75);
-		camera.setResolution(640, 480);
+		UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
+		cubeCam.setBrightness(75);
+		cubeCam.setResolution(640, 480);
+		UsbCamera driveCam = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
+		driveCam.setBrightness(75);
+		driveCam.setResolution(640, 480);
 		
 		Devices.getInstance().getNavXGyro().reset();
 	}
