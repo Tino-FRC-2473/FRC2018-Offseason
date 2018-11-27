@@ -9,8 +9,11 @@ package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.PointTurn;
+import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -20,25 +23,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 	
-	// Subsystems
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
 		
 	public static OI oi;
 
-	Command m_autonomousCommand;
-	SendableChooser<Command> m_chooser = new SendableChooser<>();
 	SendableChooser<Double> powerChooser = new SendableChooser<>();
 	SendableChooser<Integer> distanceChooser = new SendableChooser<>();
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
 	@Override
 	public void robotInit() {
 		oi = new OI();
-		// m_chooser.addDefault("Default Auto", new DriveForDistanceCommand());
-		// chooser.addObject("My Auto", new MyAutoCommand());
 		
 		powerChooser.addDefault("0.1", 0.1);
 		powerChooser.addObject("0.2", 0.2);
@@ -60,6 +54,13 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Power", powerChooser);
 		SmartDashboard.putData("Distance", distanceChooser);
 		
+		UsbCamera camera0 = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
+		camera0.setBrightness(75);
+		camera0.setResolution(640, 480);
+		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
+		camera.setBrightness(75);
+		camera.setResolution(640, 480);
+		
 		Devices.getInstance().getNavXGyro().reset();
 	}
 	
@@ -67,6 +68,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
+		Scheduler.getInstance().removeAll();
 		
 	}
 
@@ -77,10 +79,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		//double power = powerChooser.getSelected();
-		//int distance = distanceChooser.getSelected();
 		driveSubsystem.resetEncoders();
-		//new DriveForDistanceCommand(distance, new DrivePower(-power)).start();
 		new PointTurn(90, 0.3).start();
 
 		
@@ -94,7 +93,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		
+		(new TeleopDrive()).start();
 	}
 
 
