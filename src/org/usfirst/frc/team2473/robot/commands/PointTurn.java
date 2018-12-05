@@ -23,11 +23,16 @@ public class PointTurn extends Command {
 	private double prevAngle;
 	private double angleGoal;
 	private double initialAngle;
+	private double initialPower;
 	
 	
 	public PointTurn(double degrees, double power) {
 		requires(Robot.driveSubsystem);
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
+		
+		if(degrees < 45) power = RobotMap.K_START_STALL_POWER;
+		
+		this.initialPower = power;
 		
 		isClockwise = degrees > 0;
 		setPower(power);
@@ -38,8 +43,9 @@ public class PointTurn extends Command {
 	}
 	
 	private void setPower(double power) {
+		System.out.println("SFD: " + power);
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
-		if (power < 0.1) power = 0.1;
+		if (power < RobotMap.K_RUNNING_STALL_POWER) power = RobotMap.K_RUNNING_STALL_POWER;
 		this.leftPower = isClockwise ? power : -power;
 		this.rightPower = -leftPower;	
 	}
@@ -58,10 +64,9 @@ public class PointTurn extends Command {
 		double currDegrees = Devices.getInstance().getNavXGyro().getAngle();
 		double degreesToGoal = isClockwise ? angleGoal-currDegrees : currDegrees-angleGoal;
 		
-		if(degreesToGoal < RobotMap.K_DEGREE_THRESHOLD_CRITICAL) {
-			setPower(Math.floor((getPower()*RobotMap.K_ANGLE_DAMPEN_CRITICAL)*100)/100);
-		} else if(degreesToGoal < RobotMap.K_DEGREE_THRESHOLD) {
-			setPower(Math.floor((getPower()*RobotMap.K_ANGLE_DAMPEN)*100)/100);
+		if (degreesToGoal < 90) {
+			double settingPower = RobotMap.K_TURN*initialPower*(degreesToGoal/(Math.abs(angleGoal-initialAngle)));
+			setPower(Math.abs(settingPower));
 		}
 		
 		prevAngle = currDegrees;
