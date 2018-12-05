@@ -10,10 +10,12 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.PointTurn;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
+import org.usfirst.frc.team2473.robot.commands.StallExperiment;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -26,33 +28,15 @@ public class Robot extends TimedRobot {
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
 		
 	public static OI oi;
+	
+	Preferences prefs;
 
-	SendableChooser<Double> powerChooser = new SendableChooser<>();
-	SendableChooser<Integer> distanceChooser = new SendableChooser<>();
 
 	@Override
 	public void robotInit() {
 		oi = new OI();
 		
-		powerChooser.addDefault("0.1", 0.1);
-		powerChooser.addObject("0.2", 0.2);
-		powerChooser.addObject("0.3", 0.3);
-		powerChooser.addObject("0.4", 0.4);
-		powerChooser.addObject("0.5", 0.5);
-		powerChooser.addObject("0.6", 0.6);
-		powerChooser.addObject("0.7", 0.7);
-		powerChooser.addObject("0.8", 0.8);
-		powerChooser.addObject("0.9", 0.9);
-		powerChooser.addObject("1.0", 1.0);
-		
-		distanceChooser.addDefault("60 inches", 60);
-		distanceChooser.addObject("120 inches", 120);
-		distanceChooser.addObject("180 inches", 180);
-		distanceChooser.addObject("210 inches", 210);
-
-		
-		SmartDashboard.putData("Power", powerChooser);
-		SmartDashboard.putData("Distance", distanceChooser);
+		prefs = Preferences.getInstance();
 		
 		UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
 		cubeCam.setBrightness(75);
@@ -80,9 +64,20 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		driveSubsystem.resetEncoders();
-		new PointTurn(90, 0.3).start();
-
 		
+//		double speed = prefs.getDouble("speed", 0.4);
+//		double change = prefs.getDouble("change", 0.02);
+//		System.out.println("spped: " + speed);
+//		System.out.println("Change: "+change);
+//		new StallExperiment(speed, change).start();
+		
+		double speed = prefs.getDouble("speed", 0.3);
+		double degrees = prefs.getDouble("degrees", 90);
+		RobotMap.K_TURN = prefs.getDouble("K_TURN", 1);
+		System.out.println("K: "+RobotMap.K_TURN);
+		new PointTurn(degrees, speed).start();
+//		new PointTurn(90, 0.3).start();
+
 	}
 
 
