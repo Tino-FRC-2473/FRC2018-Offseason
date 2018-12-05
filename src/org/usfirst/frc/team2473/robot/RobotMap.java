@@ -19,4 +19,8 @@ public class RobotMap {
 	public static double K_DEGREE_THRESHOLD_CRITICAL = 30;
 	public static double K_ANGLE_DAMPEN = 0.95;
 	public static double K_ANGLE_DAMPEN_CRITICAL = 0.6;
+	
+	public static double K_START_STALL_POWER = 0.19;
+	public static double K_RUNNING_STALL_POWER = 0.19;
+	public static double K_TURN = 0.95;
 }

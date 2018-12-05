@@ -126,6 +126,14 @@ public class DriveSubsystem extends Subsystem {
 		System.out.println(backLeft.get()+" "+backRight.get());
 	}
 	
+	public void driveRawPower(double bl, double fl, double br, double fr) {
+		backLeft.set(bl);
+		backRight.set(-br);
+		frontLeft.set(fl);
+		frontRight.set(-fr);
+		System.out.println(backLeft.get()+" "+backRight.get());
+	}
+	
 	public void stopMotors() {
 		drive(0, 0, 0, 0);
 	}
