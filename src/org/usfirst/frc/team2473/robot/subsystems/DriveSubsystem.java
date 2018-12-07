@@ -123,7 +123,6 @@ public class DriveSubsystem extends Subsystem {
 		backRight.set(convertPower(-br, false));
 		frontLeft.set(convertPower(fl, true));
 		frontRight.set(convertPower(-fr, false));
-		System.out.println(backLeft.get()+" "+backRight.get());
 	}
 	
 	public void driveRawPower(double bl, double fl, double br, double fr) {
@@ -131,7 +130,6 @@ public class DriveSubsystem extends Subsystem {
 		backRight.set(-br);
 		frontLeft.set(fl);
 		frontRight.set(-fr);
-		System.out.println(backLeft.get()+" "+backRight.get());
 	}
 	
 	public void stopMotors() {
