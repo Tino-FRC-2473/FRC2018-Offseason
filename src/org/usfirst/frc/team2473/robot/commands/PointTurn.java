@@ -30,7 +30,7 @@ public class PointTurn extends Command {
 		requires(Robot.driveSubsystem);
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
 		
-		if(degrees < 45) power = RobotMap.K_START_STALL_POWER;
+		if(Math.abs(degrees) < 45) power = RobotMap.K_START_STALL_POWER;
 		
 		this.initialPower = power;
 		
@@ -39,15 +39,17 @@ public class PointTurn extends Command {
 		
 		prevAngle = Devices.getInstance().getNavXGyro().getAngle();
 		this.initialAngle = prevAngle;
+		
+
 		this.angleGoal = prevAngle + degrees;
+		//if (Math.abs(degrees) > 20) angleGoal -= (isClockwise) ? 10 : -10;
 	}
 	
 	private void setPower(double power) {
-		System.out.println("SFD: " + power);
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
 		if (power < RobotMap.K_RUNNING_STALL_POWER) power = RobotMap.K_RUNNING_STALL_POWER;
 		this.leftPower = isClockwise ? power : -power;
-		this.rightPower = -leftPower;	
+		this.rightPower = -leftPower;
 	}
 	
 	public double getPower(){
@@ -69,9 +71,16 @@ public class PointTurn extends Command {
 			setPower(Math.abs(settingPower));
 		}
 		
+		
 		prevAngle = currDegrees;
 		
-		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
+		if (degreesToGoal <= 10) {
+			Robot.driveSubsystem.driveRawPower(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
+		}else {
+			Robot.driveSubsystem.driveRawPower(leftPower, leftPower, rightPower, rightPower);
+		}
+		
+		System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
 		
 	}
 
@@ -83,11 +92,11 @@ public class PointTurn extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println("Angle: "+Devices.getInstance().getNavXGyro().getAngle());
+		System.out.println("Absolute Angle: "+Devices.getInstance().getNavXGyro().getAngle());
 		Robot.driveSubsystem.stopMotors();
-		System.out.println("Angle: "+Devices.getInstance().getNavXGyro().getAngle());
-		System.out.println("Angle: "+initialAngle);
-		System.out.println(Math.abs(initialAngle-Devices.getInstance().getNavXGyro().getAngle()));
+		System.out.println("Relative Angle: " + Math.abs(initialAngle-Devices.getInstance().getNavXGyro().getAngle()));
+		System.out.println("Turn Speed: " + this.initialPower);
+		System.out.println("Current speed: " + this.leftPower);
 	}
 
 	@Override
