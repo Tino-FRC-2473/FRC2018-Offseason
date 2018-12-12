@@ -7,10 +7,14 @@
 
 package org.usfirst.frc.team2473.robot;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.PointTurn;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.commands.StallExperiment;
+import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.cscore.UsbCamera;
@@ -29,6 +33,7 @@ public class Robot extends TimedRobot {
 		
 	public static OI oi;
 	
+
 	Preferences prefs;
 
 
@@ -45,6 +50,7 @@ public class Robot extends TimedRobot {
 		driveCam.setBrightness(75);
 		driveCam.setResolution(640, 480);
 		
+		driveSubsystem.resetEncoders();
 		Devices.getInstance().getNavXGyro().reset();
 	}
 	
@@ -63,7 +69,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		driveSubsystem.resetEncoders();
 		
 //		double speed = prefs.getDouble("speed", 0.4);
 //		double change = prefs.getDouble("change", 0.02);
@@ -71,15 +76,20 @@ public class Robot extends TimedRobot {
 //		System.out.println("Change: "+change);
 //		new StallExperiment(speed, change).start();
 		
-		double speed = prefs.getDouble("speed", 0.3);
+		double power = prefs.getDouble("speed", 0.3);
 		double degrees = prefs.getDouble("degrees", 90);
 		RobotMap.K_TURN = prefs.getDouble("K_TURN", 1);
 		System.out.println("K: "+RobotMap.K_TURN);
-		new PointTurn(degrees, speed).start();
+				
+		AutonomousTester tester = new AutonomousTester();
+		tester.start();
+		
+		
+		
+		
 //		new PointTurn(90, 0.3).start();
 
 	}
-
 
 	@Override
 	public void autonomousPeriodic() {		

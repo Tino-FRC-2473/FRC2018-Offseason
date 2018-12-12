@@ -28,7 +28,7 @@ public class StraightDrive extends Command {
 	public StraightDrive(double inches, double power) {
 		requires(Robot.driveSubsystem);
 		
-		setDistance(inches);
+		this.inches = inches;
 		this.power = power;
 	}
 	
@@ -37,15 +37,16 @@ public class StraightDrive extends Command {
 	}
 
 	private void setDistance(double inches) {
-		this.inches = inches;
-		this.ticks = this.inches * RobotMap.K_TICKS_PER_INCH;
+		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
+		this.ticks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR)) + (this.inches * RobotMap.K_TICKS_PER_INCH);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.driveSubsystem.drive(power, power, power, power);
-		prevTicks = 0;
+		setDistance(inches);
+		prevTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
 		finished = false;
+		Robot.driveSubsystem.drive(power, power, power, power);
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class StraightDrive extends Command {
 		if (ticks - (currTicks + delta) < RobotMap.K_ENCODER_THRESHOLD) {
 			tempPower = SLOW_POWER;
 		}
-		Robot.driveSubsystem.drive(0.1 ,0.1, 0.1, 0.1);
+		Robot.driveSubsystem.drive(tempPower,tempPower,tempPower,tempPower);
 		prevTicks = currTicks;
 		
 	}

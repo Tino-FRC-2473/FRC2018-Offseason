@@ -19,15 +19,22 @@ public class PointTurn extends Command {
 	private double leftPower;
 	private double rightPower;
 	
+	private double degrees;
+	
 	private boolean isClockwise;
 	private double prevAngle;
 	private double angleGoal;
 	private double initialAngle;
 	private double initialPower;
 	
+	private boolean hasReversedPower;
+	
 	
 	public PointTurn(double degrees, double power) {
 		requires(Robot.driveSubsystem);
+		
+		this.degrees = degrees;
+		
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
 		
 		if(Math.abs(degrees) < 45) power = RobotMap.K_START_STALL_POWER;
@@ -37,11 +44,7 @@ public class PointTurn extends Command {
 		isClockwise = degrees > 0;
 		setPower(power);
 		
-		prevAngle = Devices.getInstance().getNavXGyro().getAngle();
-		this.initialAngle = prevAngle;
 		
-
-		this.angleGoal = prevAngle + degrees;
 		//if (Math.abs(degrees) > 20) angleGoal -= (isClockwise) ? 10 : -10;
 	}
 	
@@ -58,6 +61,13 @@ public class PointTurn extends Command {
 	
 	@Override
 	protected void initialize() {
+		prevAngle = Devices.getInstance().getNavXGyro().getAngle();
+		this.initialAngle = prevAngle;
+		
+
+		this.angleGoal = prevAngle + this.degrees;
+		
+		
 		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 	}
 
@@ -72,15 +82,23 @@ public class PointTurn extends Command {
 		}
 		
 		
-		prevAngle = currDegrees;
+		double deltaAngle = currDegrees - prevAngle;
+		boolean movingInTurnDirection = (isClockwise) ? deltaAngle > 1 : deltaAngle < -1;
 		
-		if (degreesToGoal <= 10) {
-			Robot.driveSubsystem.driveRawPower(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
+		
+		if (degreesToGoal <= 10 && movingInTurnDirection) {
+			if (isClockwise) {
+				Robot.driveSubsystem.driveRawPower(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
+			} else {
+				Robot.driveSubsystem.driveRawPower(RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER);
+			}
 		}else {
 			Robot.driveSubsystem.driveRawPower(leftPower, leftPower, rightPower, rightPower);
 		}
 		
 		System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
+		
+		prevAngle = currDegrees;
 		
 	}
 
@@ -92,13 +110,18 @@ public class PointTurn extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println("Absolute Angle: "+Devices.getInstance().getNavXGyro().getAngle());
+		
+		double angle = Devices.getInstance().getNavXGyro().getAngle();
+		
+		System.out.println("Absolute Angle: "+ angle);
+				
 		Robot.driveSubsystem.stopMotors();
-		System.out.println("Relative Angle: " + Math.abs(initialAngle-Devices.getInstance().getNavXGyro().getAngle()));
+		System.out.println("Relative Angle: " + Math.abs(initialAngle-angle));
+				
 		System.out.println("Turn Speed: " + this.initialPower);
 		System.out.println("Current speed: " + this.leftPower);
 	}
-
+	
 	@Override
 	protected void interrupted() {
 		Robot.driveSubsystem.stopMotors();
