@@ -14,14 +14,14 @@ public class RobotMap {
 	public static int TALON_FR = 7;
 	
 	public static double K_TICKS_PER_INCH = 55;
-	public static double K_ENCODER_THRESHOLD = 1500;
+	public static double K_ENCODER_THRESHOLD = 750;
 	public static double K_DEGREE_THRESHOLD = 70;
 	public static double K_DEGREE_THRESHOLD_CRITICAL = 30;
 	public static double K_ANGLE_DAMPEN = 0.95;
 	public static double K_ANGLE_DAMPEN_CRITICAL = 0.6;
 	
 	public static double K_START_STALL_POWER = 0.19;
-	public static double K_RUNNING_STALL_POWER = 0.19;
+	public static double K_RUNNING_STALL_POWER = 0.2;
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
 }
