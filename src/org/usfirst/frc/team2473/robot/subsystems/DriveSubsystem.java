@@ -14,6 +14,7 @@ import java.util.HashMap;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -140,6 +141,7 @@ public class DriveSubsystem extends Subsystem {
 	}
 	
 	public int getEncoderTicks(int id) {
+		if (id == RobotMap.TALON_FR || id == RobotMap.TALON_FL) return -Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
 		return Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
 	}
 	
@@ -151,7 +153,10 @@ public class DriveSubsystem extends Subsystem {
 	}
 	
 	public void resetEncoderForMotor(WPI_TalonSRX motor) {
-		motor.setSelectedSensorPosition(0,0,5);
+		ErrorCode c = motor.setSelectedSensorPosition(0,0,5000);
+		if (c.value != 0) {
+			throw new IllegalArgumentException(c.toString());
+		}
 	}
 	
 	public void printEncoders() {

@@ -13,22 +13,25 @@ public class AutonomousTester extends CommandGroup {
     	
         
         //Lightning bolt
+//    	addSequential(new WaitCommand(wait));
+//    	
+//        addSequential(new StraightDrive(60, 0.5));
+//        addSequential(new WaitCommand(wait));
+//        
+//        addSequential(new PointTurn(45, 0.45));
+//        addSequential(new WaitCommand(wait));
+//        
+//        addSequential(new StraightDrive(30, 0.5));
+//        addSequential(new WaitCommand(wait));
+//        
+//        addSequential(new PointTurn(-45, 0.45));
+//        addSequential(new WaitCommand(wait));
+//        
+//        addSequential(new StraightDrive(30, 0.5));
         
-        addSequential(new StraightDrive(60, 0.5));
-        addSequential(new WaitCommand(wait));
-        
-        addSequential(new PointTurn(45, 0.45));
-        addSequential(new WaitCommand(wait));
-        
-        addSequential(new StraightDrive(30, 0.5));
-        addSequential(new WaitCommand(wait));
-        
-        addSequential(new PointTurn(-45, 0.45));
-        addSequential(new WaitCommand(wait));
-        
-        addSequential(new StraightDrive(30, 0.5));
-        
-         
+	      addSequential(new PointTurn(-180, 0.45));
+	      addSequential(new WaitCommand(wait));
+	      addSequential(new StraightDrive(48, 0.5));
         
     	
 //    	for (int i = 0; i < 4; i++) {

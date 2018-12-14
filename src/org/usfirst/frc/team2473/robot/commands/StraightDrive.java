@@ -62,6 +62,8 @@ public class StraightDrive extends Command {
 				
 		prevTicks = currTicks;
 		
+		Robot.driveSubsystem.printEncoders();
+		
 	}
 
 	@Override
