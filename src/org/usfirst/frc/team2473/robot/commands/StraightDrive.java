@@ -35,16 +35,18 @@ public class StraightDrive extends Command {
 	public void setPower(double power) {
 		this.power = power;
 	}
-
+	/**
+	 * Set the target distance
+	 */
 	private void setDistance(double inches) {
 		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
-		this.ticks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR)) + (this.inches * RobotMap.K_TICKS_PER_INCH);
+		this.ticks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (this.inches * RobotMap.K_TICKS_PER_INCH);
 	}
 
 	@Override
 	protected void initialize() {
 		setDistance(inches);
-		prevTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
+		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		finished = false;
 		Robot.driveSubsystem.drive(power, power, power, power);
 	}
@@ -52,7 +54,7 @@ public class StraightDrive extends Command {
 	@Override
 	protected void execute() {
 		double tempPower = power;
-		int currTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
+		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		
 		int delta = currTicks - prevTicks;
 		if (ticks - (currTicks + delta) < RobotMap.K_ENCODER_THRESHOLD) {
@@ -68,7 +70,7 @@ public class StraightDrive extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		int currTicks = Math.abs(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
+		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		return (ticks < currTicks);		
 	}
 
