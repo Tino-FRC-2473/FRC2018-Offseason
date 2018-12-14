@@ -59,6 +59,7 @@ public class StraightDrive extends Command {
 			tempPower = SLOW_POWER;
 		}
 		Robot.driveSubsystem.drive(tempPower,tempPower,tempPower,tempPower);
+				
 		prevTicks = currTicks;
 		
 	}
