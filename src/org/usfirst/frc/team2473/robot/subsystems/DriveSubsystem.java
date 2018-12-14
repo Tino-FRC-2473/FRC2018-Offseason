@@ -140,8 +140,13 @@ public class DriveSubsystem extends Subsystem {
 	public void initDefaultCommand() {
 	}
 	
+	/**
+	 *	Gets the encoder ticks of a given Talon based on id. Positive means robot is going forward.
+	 *  @param id Talon ID
+	 *  @return Encoder ticks
+	 */
 	public int getEncoderTicks(int id) {
-		if (id == RobotMap.TALON_FR || id == RobotMap.TALON_FL) return -Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
+		if (id == RobotMap.TALON_FR || id == RobotMap.TALON_BR) return -Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
 		return Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
 	}
 	
