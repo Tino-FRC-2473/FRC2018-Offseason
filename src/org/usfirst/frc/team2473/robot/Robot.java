@@ -70,7 +70,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		driveSubsystem.resetEncoders();
-		
 //		double speed = prefs.getDouble("speed", 0.4);
 //		double change = prefs.getDouble("change", 0.02);
 //		System.out.println("spped: " + speed);

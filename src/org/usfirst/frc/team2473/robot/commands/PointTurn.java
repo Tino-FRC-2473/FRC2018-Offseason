@@ -25,10 +25,7 @@ public class PointTurn extends Command {
 	private double prevAngle;
 	private double angleGoal;
 	private double initialAngle;
-	private double initialPower;
-	
-	private boolean hasReversedPower;
-	
+	private double initialPower;	
 	
 	public PointTurn(double degrees, double power) {
 		requires(Robot.driveSubsystem);
@@ -96,7 +93,7 @@ public class PointTurn extends Command {
 			Robot.driveSubsystem.driveRawPower(leftPower, leftPower, rightPower, rightPower);
 		}
 		
-		System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
+		//System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
 		
 		prevAngle = currDegrees;
 		
