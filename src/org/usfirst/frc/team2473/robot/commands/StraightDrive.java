@@ -29,7 +29,7 @@ public class StraightDrive extends Command {
 		requires(Robot.driveSubsystem);
 		
 		this.inches = inches;
-		this.power = power;
+		this.power = (inches < 0) ? -power : power;
 	}
 	
 	public void setPower(double power) {
@@ -48,6 +48,8 @@ public class StraightDrive extends Command {
 		setDistance(inches);
 		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		finished = false;
+
+		System.out.println("REQUIRED TICKS: " + ticks);
 		Robot.driveSubsystem.drive(power, power, power, power);
 	}
 
@@ -57,8 +59,9 @@ public class StraightDrive extends Command {
 		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		
 		int delta = currTicks - prevTicks;
-		if (ticks - (currTicks + delta) < RobotMap.K_ENCODER_THRESHOLD) {
-			tempPower = SLOW_POWER;
+		if (Math.abs(ticks - (currTicks + delta)) < RobotMap.K_ENCODER_THRESHOLD) { // Math.abs() allows this to work regardless of driving direction (forwards or backwards)
+			if (inches > 0) tempPower = SLOW_POWER;
+			else tempPower = -SLOW_POWER;
 		}
 		Robot.driveSubsystem.drive(tempPower,tempPower,tempPower,tempPower);
 				
@@ -71,7 +74,8 @@ public class StraightDrive extends Command {
 	@Override
 	protected boolean isFinished() {
 		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
-		return (ticks < currTicks);		
+		if (this.inches > 0) return (ticks < currTicks);
+		else return (ticks > currTicks);
 	}
 
 	@Override
