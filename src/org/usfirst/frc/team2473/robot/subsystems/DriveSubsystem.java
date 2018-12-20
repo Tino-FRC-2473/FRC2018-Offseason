@@ -152,9 +152,16 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void resetEncoders() {
 		resetEncoderForMotor(backLeft);
+		System.out.println("Back left reset");
+		
 		resetEncoderForMotor(backRight);
+		System.out.println("Back right reset");
+		
 		resetEncoderForMotor(frontLeft);
+		System.out.println("Front left reset");
+		
 		resetEncoderForMotor(frontRight);
+		System.out.println("Front right reset"); 
 	}
 	
 	public void resetEncoderForMotor(WPI_TalonSRX motor) {
@@ -162,11 +169,12 @@ public class DriveSubsystem extends Subsystem {
 		if (c.value != 0) {
 			throw new IllegalArgumentException(c.toString());
 		}
+		
+		while (motor.getSelectedSensorPosition() != 0);
 	}
 	
 	public void printEncoders() {
-		System.out.println("FRONT RIGHT: " + getEncoderTicks(RobotMap.TALON_FR));
-		System.out.println("BACK LEFT: " + getEncoderTicks(RobotMap.TALON_BL));
+		System.out.println(String.format("FR: %7d       BL: %7d", getEncoderTicks(RobotMap.TALON_FR), getEncoderTicks(RobotMap.TALON_BL)));
 	}
 	
 	public int encoderDifference() {

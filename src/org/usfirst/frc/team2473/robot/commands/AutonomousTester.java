@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
  */
 public class AutonomousTester extends CommandGroup {
 
-    public AutonomousTester() {
+    public AutonomousTester(int distanceFirst, int turnAngle, int distanceSecond) {
     	double wait = 0.1;
     	
         
@@ -28,10 +28,12 @@ public class AutonomousTester extends CommandGroup {
 //        addSequential(new WaitCommand(wait));
 //        
 //        addSequential(new StraightDrive(30, 0.5));
-        
-	      addSequential(new PointTurn(-180, 0.45));
+
+	      addSequential(new StraightDrive(distanceFirst, 0.3));
 	      addSequential(new WaitCommand(wait));
-	      addSequential(new StraightDrive(48, 0.5));
+	      addSequential(new PointTurn(turnAngle, 0.45));
+	      addSequential(new WaitCommand(wait));
+	      addSequential(new StraightDrive(distanceSecond, 0.3));
         
     	
 //    	for (int i = 0; i < 4; i++) {

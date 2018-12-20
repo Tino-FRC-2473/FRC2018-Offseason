@@ -76,12 +76,12 @@ public class Robot extends TimedRobot {
 //		System.out.println("Change: "+change);
 //		new StallExperiment(speed, change).start();
 		
-		double power = prefs.getDouble("speed", 0.3);
-		double degrees = prefs.getDouble("degrees", 90);
-		RobotMap.K_TURN = prefs.getDouble("K_TURN", 1);
-		System.out.println("K: "+RobotMap.K_TURN);
+		
+		int distanceFirst  = prefs.getInt("1. First Distance", 48);
+		int degrees  = prefs.getInt("2. Turn Degrees", 180);
+		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
 				
-		AutonomousTester tester = new AutonomousTester();
+		AutonomousTester tester = new AutonomousTester(distanceFirst, degrees, distanceSecond);
 		tester.start();
 //		new StraightDrive(48, 0.5).start();
 //		new PointTurn(90, 0.45).start();
