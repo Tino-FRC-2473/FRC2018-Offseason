@@ -140,6 +140,10 @@ public class DriveSubsystem extends Subsystem {
 	public void initDefaultCommand() {
 	}
 	
+	public double getGyroAngle() {
+		return Devices.getInstance().getNavXGyro().getAngle();
+	}
+	
 	/**
 	 *	Gets the encoder ticks of a given Talon based on id. Positive means robot is going forward.
 	 *  @param id Talon ID
@@ -150,27 +154,14 @@ public class DriveSubsystem extends Subsystem {
 		return Devices.getInstance().getTalon(id).getSelectedSensorPosition(0);
 	}
 	
-	public void resetEncoders() {
-		resetEncoderForMotor(backLeft);
-		System.out.println("Back left reset");
-		
-		resetEncoderForMotor(backRight);
-		System.out.println("Back right reset");
-		
-		resetEncoderForMotor(frontLeft);
-		System.out.println("Front left reset");
-		
-		resetEncoderForMotor(frontRight);
-		System.out.println("Front right reset"); 
-	}
-	
-	public void resetEncoderForMotor(WPI_TalonSRX motor) {
-		ErrorCode c = motor.setSelectedSensorPosition(0,0,5000);
-		if (c.value != 0) {
-			throw new IllegalArgumentException(c.toString());
-		}
-		
-		while (motor.getSelectedSensorPosition() != 0);
+	public synchronized void resetEncoders() {
+		frontRight.setSelectedSensorPosition(0, 0, 0);
+		backLeft.setSelectedSensorPosition(0, 0, 0);
+		backRight.setSelectedSensorPosition(0, 0, 0);
+		frontLeft.setSelectedSensorPosition(0, 0, 0);
+				
+		System.out.println("All encoders are reset!");
+		printEncoders();
 	}
 	
 	public void printEncoders() {

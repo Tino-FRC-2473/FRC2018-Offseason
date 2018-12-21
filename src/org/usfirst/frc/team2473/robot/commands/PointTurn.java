@@ -58,7 +58,7 @@ public class PointTurn extends Command {
 	
 	@Override
 	protected void initialize() {
-		prevAngle = Devices.getInstance().getNavXGyro().getAngle();
+		prevAngle = Robot.driveSubsystem.getGyroAngle();
 		this.initialAngle = prevAngle;
 		
 
@@ -70,7 +70,7 @@ public class PointTurn extends Command {
 
 	@Override
 	protected void execute() {
-		double currDegrees = Devices.getInstance().getNavXGyro().getAngle();
+		double currDegrees = Robot.driveSubsystem.getGyroAngle();
 		double degreesToGoal = isClockwise ? angleGoal-currDegrees : currDegrees-angleGoal;
 		
 		if (degreesToGoal < 90) {
@@ -85,12 +85,12 @@ public class PointTurn extends Command {
 		
 		if (degreesToGoal <= 10 && movingInTurnDirection) {
 			if (isClockwise) {
-				Robot.driveSubsystem.driveRawPower(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
+				Robot.driveSubsystem.drive(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
 			} else {
-				Robot.driveSubsystem.driveRawPower(RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER);
+				Robot.driveSubsystem.drive(RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER);
 			}
 		}else {
-			Robot.driveSubsystem.driveRawPower(leftPower, leftPower, rightPower, rightPower);
+			Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 		}
 		
 		//System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
@@ -101,14 +101,14 @@ public class PointTurn extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		double currAngle = Devices.getInstance().getNavXGyro().getAngle();
+		double currAngle = Robot.driveSubsystem.getGyroAngle();
 		return isClockwise ? currAngle > angleGoal : currAngle < angleGoal;
 	}
 
 	@Override
 	protected void end() {
 		
-		double angle = Devices.getInstance().getNavXGyro().getAngle();
+		double angle = Robot.driveSubsystem.getGyroAngle();
 		
 		System.out.println("Absolute Angle: "+ angle);
 				

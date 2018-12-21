@@ -48,6 +48,8 @@ public class StraightDrive extends Command {
 		setDistance(inches);
 		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		finished = false;
+		
+		System.out.println("ANGLE: " + Robot.driveSubsystem.getGyroAngle());
 
 		System.out.println("REQUIRED TICKS: " + ticks);
 		Robot.driveSubsystem.drive(power, power, power, power);
