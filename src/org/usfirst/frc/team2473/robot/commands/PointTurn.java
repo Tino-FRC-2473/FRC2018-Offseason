@@ -26,22 +26,19 @@ public class PointTurn extends Command {
 	private double initialAngle;
 	private double initialPower;	
 	
-	public PointTurn(double degrees, double power) {
+	public PointTurn(double deltaDegrees, double power) {
 		requires(Robot.driveSubsystem);
 		
-		this.degrees = degrees;
+		this.degrees = deltaDegrees;
 		
 		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
 		
-		if(Math.abs(degrees) < 45) power = RobotMap.K_START_STALL_POWER;
+		if(Math.abs(deltaDegrees) < 45) power = RobotMap.K_START_STALL_POWER;
 		
 		this.initialPower = power;
-		
-		isClockwise = degrees > 0;
+		isClockwise = deltaDegrees > 0;
 		setPower(power);
 		
-		
-		//if (Math.abs(degrees) > 20) angleGoal -= (isClockwise) ? 10 : -10;
 	}
 	
 	private void setPower(double power) {
