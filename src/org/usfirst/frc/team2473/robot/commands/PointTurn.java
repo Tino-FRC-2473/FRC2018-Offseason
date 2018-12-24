@@ -7,7 +7,6 @@
 
 package org.usfirst.frc.team2473.robot.commands;
 
-import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
