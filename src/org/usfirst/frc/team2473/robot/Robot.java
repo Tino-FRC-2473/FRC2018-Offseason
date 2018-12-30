@@ -81,15 +81,9 @@ public class Robot extends TimedRobot {
 		int degrees  = prefs.getInt("2. Turn Degrees", 180);
 		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
 				
-		AutonomousTester tester = new AutonomousTester(distanceFirst, degrees, distanceSecond);
+		AutonomousTester tester = new AutonomousTester(0.1);
+		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
 		tester.start();
-//		new StraightDrive(48, 0.5).start();
-//		new PointTurn(90, 0.45).start();
-		
-		
-		
-		
-//		new PointTurn(90, 0.3).start();
 
 	}
 
