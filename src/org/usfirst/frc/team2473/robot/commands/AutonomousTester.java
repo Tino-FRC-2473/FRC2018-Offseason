@@ -11,14 +11,12 @@ public class AutonomousTester extends CommandGroup {
 	/**
 	 * the amount of time to wait in between commands (seconds)
 	 */
-	private double wait;
+	private final double WAIT = 0.1;
 
 	/**
 	 * Constructs an empty tester.
-	 * @param wait the amount of time to wait in between commands (seconds)
 	 */
-	public AutonomousTester(double wait) {
-		this.wait = wait;
+	public AutonomousTester() {
     }
 	
 	/**
@@ -29,9 +27,9 @@ public class AutonomousTester extends CommandGroup {
 	 */
 	public void addDriveTurnDrive(int distanceFirst, int turnAngle, int distanceSecond) {
 		addSequential(new StraightDrive(distanceFirst, 0.3));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
 		addSequential(new PointTurn(turnAngle, 0.45));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
 		addSequential(new StraightDrive(distanceSecond, 0.3));	
 	}
 	
@@ -46,19 +44,19 @@ public class AutonomousTester extends CommandGroup {
 	 * 		- drive straight 30 inches
 	 */
 	public void addLightningBolt() {
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
     	
 		addSequential(new StraightDrive(60, 0.3));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
         
 		addSequential(new PointTurn(45, 0.45));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
         
 		addSequential(new StraightDrive(30, 0.3));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
         
 		addSequential(new PointTurn(-45, 0.45));
-		addSequential(new WaitCommand(wait));
+		addSequential(new WaitCommand(WAIT));
         
 		addSequential(new StraightDrive(30, 0.3));
 	}
@@ -69,9 +67,9 @@ public class AutonomousTester extends CommandGroup {
 	public void addSquare() {
 		for (int i = 0; i < 4; i++) {
     		addSequential(new StraightDrive(48, 0.3));
-    		addSequential(new WaitCommand(wait));
+    		addSequential(new WaitCommand(WAIT));
     		addSequential(new PointTurn(90, 0.45));
-    		addSequential(new WaitCommand(wait));
+    		addSequential(new WaitCommand(WAIT));
     	}
 	}
 }
