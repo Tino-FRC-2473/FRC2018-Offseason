@@ -1,10 +1,3 @@
-/*-----------urr------------------------------------.92+-E.G---OYOY-------.---------------gre---*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2473.robot.commands;
 
 import org.usfirst.frc.team2473.robot.Robot;
@@ -13,41 +6,99 @@ import org.usfirst.frc.team2473.robot.RobotMap;
 import edu.wpi.first.wpilibj.command.Command;
 
 
+/**
+ * A command that allows for accurate robot turning to a specific angle.
+ */
 public class PointTurn extends Command {
 	
+	/**
+	 * the signed power of the left motor while turning (-1 to 1)
+	 */
 	private double leftPower;
+	
+	/**
+	 * the signed power of the right motor while turning (-1 to 1)
+	 */
 	private double rightPower;
 	
-	private double degrees;
+	/**
+	 * The amount of degrees to turn by
+	 */
+	private double turnByDegrees;
 	
+	/**
+	 * Indicates whether the robot is turning clockwise based on
+	 * sign of turnByDegrees.
+	 */
 	private boolean isClockwise;
+	
+	/**
+	 * Variable that keeps track of the previous gyro heading
+	 * (gyro heading at the end of the previous call of execute).
+	 */
 	private double prevAngle;
+	
+	/**
+	 * This stores the value of the absolute final heading the robot
+	 * should be facing (can be any number)
+	 */
 	private double angleGoal;
+	
+	/**
+	 * This stores the value of the absolute heading the robot
+	 * was facing before it started turning (can be any number)
+	 */
 	private double initialAngle;
+	
+	/**
+	 * This stores the value of the initial power of the motors
+	 * when turning (always positive)
+	 */
 	private double initialPower;	
 	
+	/**
+	 * Creates a PointTurn object given the degrees needed to turn by
+	 * and turn power.
+	 * @param deltaDegrees the amount of degrees to turn by (positive is clockwise, negative is counterclockwise)
+	 * @param power the starting power of the turn
+	 */
 	public PointTurn(double deltaDegrees, double power) {
 		requires(Robot.driveSubsystem);
 		
-		this.degrees = deltaDegrees;
-		
-		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
-		
+		/* power entered must only determine turn power and not direction */
+		if (power < 0) throw new IllegalArgumentException("Power must be positive for point turn!");
+		this.initialPower = power;
+		setPower(power);
+
+		/*
+		 * If turning 45 degrees or less, starting at greater than the
+		 * K_START_STALL_POWER yields and inaccurate turn. Thus, it is
+		 * limited over here.
+		 */
+		this.turnByDegrees = deltaDegrees;
 		if(Math.abs(deltaDegrees) < 45) power = RobotMap.K_START_STALL_POWER;
 		
-		this.initialPower = power;
 		isClockwise = deltaDegrees > 0;
-		setPower(power);
 		
 	}
 	
+	/**
+	 * Changes the values of leftPower and rightPower based on checks for positive values
+	 * and minimum power at which the motors may start stalling.
+	 * @param power desired power (positive)
+	 */
 	private void setPower(double power) {
-		if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar for point turn!");
+		/* inputed power must only be for magnitude and must be large enough to prevent motor stalls */
+		if (power < 0) throw new IllegalArgumentException("Power must be positive for point turn!");
 		if (power < RobotMap.K_RUNNING_STALL_POWER) power = RobotMap.K_RUNNING_STALL_POWER;
 		this.leftPower = isClockwise ? power : -power;
 		this.rightPower = -leftPower;
 	}
 	
+	/**
+	 * Returns the magnitude of the current power of the motors while turning
+	 * @return turning power
+	 */
 	public double getPower(){
 		return isClockwise ? leftPower : rightPower;
 	}
@@ -56,21 +107,23 @@ public class PointTurn extends Command {
 	protected void initialize() {
 		prevAngle = Robot.driveSubsystem.getGyroAngle();
 		this.initialAngle = prevAngle;
-		
-
-		this.angleGoal = prevAngle + this.degrees;
-		
-		
+		this.angleGoal = prevAngle + this.turnByDegrees;
 		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
 	}
 
 	@Override
 	protected void execute() {
 		double currDegrees = Robot.driveSubsystem.getGyroAngle();
+		/* ensures that degreesToGoal is a positive double */
 		double degreesToGoal = isClockwise ? angleGoal-currDegrees : currDegrees-angleGoal;
 		
+		/*
+		 * Starting at 90 degrees, dampen motor power based on experimentally determined
+		 * K_TURN constant and a ratio of the degrees left to turn by and the total amount
+		 * of degrees needed to turn.
+		 */
 		if (degreesToGoal < 90) {
-			double settingPower = RobotMap.K_TURN*initialPower*(degreesToGoal/(Math.abs(angleGoal-initialAngle)));
+			double settingPower = RobotMap.K_TURN*initialPower*(degreesToGoal/(Math.abs(turnByDegrees)));
 			setPower(Math.abs(settingPower));
 		}
 		
@@ -78,7 +131,13 @@ public class PointTurn extends Command {
 		double deltaAngle = currDegrees - prevAngle;
 		boolean movingInTurnDirection = (isClockwise) ? deltaAngle > 1 : deltaAngle < -1;
 		
-		
+		/*
+		 * For the last 10 degrees, set the motor powers in the opposite direction to
+		 * counteract any skid so the robot comes to a complete stop by the desired
+		 * destination. To prevent the robot from accidentally moving in the opposite
+		 * direction, keep track of the deltaAngle to confirm its direction of movement
+		 * and set motor powers accordingly.
+		 */
 		if (degreesToGoal <= 10 && movingInTurnDirection) {
 			if (isClockwise) {
 				Robot.driveSubsystem.drive(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
