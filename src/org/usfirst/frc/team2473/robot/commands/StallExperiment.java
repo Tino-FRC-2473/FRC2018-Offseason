@@ -5,12 +5,8 @@
 /*----------------------------------------------------------------------------*/
 
 package org.usfirst.frc.team2473.robot.commands;
-
-import java.util.ArrayList;
-
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.Robot;
-import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -22,17 +18,15 @@ public class StallExperiment extends Command {
     private double prevAngle;
     private double currAngle;
     
-    private final int[] MOTORS = {RobotMap.TALON_FR, RobotMap.TALON_BR, 
-                                  RobotMap.TALON_FL, RobotMap.TALON_BL};
     
 
-    public StallExperiment(double power, double change) {
+    public StallExperiment(double power, double powerDecrement) {
         requires(Robot.driveSubsystem);
         
-        if (power < 0) throw new IllegalArgumentException("Power must be a positive scalar!");
-        if (change < 0) throw new IllegalArgumentException("Change must be a positive scalar!");
+        if (power < 0) throw new IllegalArgumentException("Power must be positive!");
+        if (powerDecrement < 0) throw new IllegalArgumentException("Change must be positive!");
         this.power = power;
-        this.change = change;
+        this.change = powerDecrement;
         
     }
     
