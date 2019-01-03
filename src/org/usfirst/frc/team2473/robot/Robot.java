@@ -70,13 +70,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		driveSubsystem.resetEncoders();
-//		double speed = prefs.getDouble("speed", 0.4);
-//		double change = prefs.getDouble("change", 0.02);
-//		System.out.println("spped: " + speed);
-//		System.out.println("Change: "+change);
-//		new StallExperiment(speed, change).start();
-		
-		
+//	
 		int distanceFirst  = prefs.getInt("1. First Distance", 48);
 		int degrees  = prefs.getInt("2. Turn Degrees", 180);
 		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
