@@ -20,21 +20,22 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
 	
+	// Single instance of DriveSubsystem
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
 	
+	// OI is used to get inputs from joysticks and buttons on the driver station
 	public static OI oi;
 
+	// Preferences is used to input parameters without re-deploying code
 	Preferences prefs;
-
-	/**
-	 * Runs once when the robot turns on
-	 */
+	
 	@Override
 	public void robotInit() {
 		oi = new OI();
 		
 		prefs = Preferences.getInstance();
-				
+		
+		// Camera initialization with name, brightness, and resolution
 		UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
 		cubeCam.setBrightness(75);
 		cubeCam.setResolution(640, 480);
@@ -42,63 +43,49 @@ public class Robot extends TimedRobot {
 		driveCam.setBrightness(75);
 		driveCam.setResolution(640, 480);
 		
+		// Reset gyro
 		Devices.getInstance().getNavXGyro().reset();
 	}
 	
-	/**
-	 * Runs once each time the robot is set to disabled
-	 */
 	@Override
 	public void disabledInit() {
+		// Print the current gyro angle after the robot is disabled
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
 	}
 
-	/**
-	 * Runs continuously while the robot is in the disabled state
-	 */
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * Runs once before the autonomous state
-	 */
 	@Override
 	public void autonomousInit() {
 		driveSubsystem.resetEncoders();
-//	
+
+		// Get first distance, degrees to turn by, and second distance from Preferences
 		int distanceFirst  = prefs.getInt("1. First Distance", 48);
 		int degrees  = prefs.getInt("2. Turn Degrees", 180);
 		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
-				
+			
+		// Create an autonomous routine with a drive, turn, drive pattern
 		AutonomousTester tester = new AutonomousTester();
 		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
 		tester.start();
 
 	}
 
-	/**
-	 * Runs continuously during the autonomous state
-	 */
 	@Override
 	public void autonomousPeriodic() {		
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * Runs once before the teleop state
-	 */
 	@Override
 	public void teleopInit() {
 		(new TeleopDrive()).start();
 	}
 
-	/**
-	 * Runs continuously during the teleop state
-	 */
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
