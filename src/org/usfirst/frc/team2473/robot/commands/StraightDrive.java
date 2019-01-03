@@ -12,46 +12,76 @@ import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * A class that enables straight driving of the robot to a given distance
+ * at a given power.
+ */
 public class StraightDrive extends Command {
 	
+	/**
+	 * Lowest power robot will run at towards the end of
+	 * the straight drive.
+	 */
 	private static double SLOW_POWER = 0.1;
 	
-	private double inches;
-	private double ticks;
+	/**
+	 * Number of inches to move by.
+	 */
+	private double moveByInches;
 	
+	/**
+	 * The number of ticks that the robot should
+	 * be at if it has reached its goal.
+	 */
+	private double absoluteTickGoal;
+	
+	/**
+	 * The absolute number of ticks that the robot
+	 * was at after the last call of execute.
+	 */
 	private int prevTicks;
 	
+	/**
+	 * Initial power to drive the robot at.
+	 */
 	private double power;
-
-	public boolean finished;
 	
+	/**
+	 * Create a StraightDrive object with given inch goal and power.
+	 * @param inches inches to move by
+	 * @param power initial power to move at
+	 */
 	public StraightDrive(double inches, double power) {
 		requires(Robot.driveSubsystem);
 		
-		this.inches = inches;
+		this.moveByInches = inches;
 		this.power = (inches < 0) ? -power : power;
 	}
 	
+	/**
+	 * Set the power to move the robot at.
+	 * @param power power
+	 */
 	public void setPower(double power) {
 		this.power = power;
 	}
+	
 	/**
 	 * Set the target distance
 	 */
 	private void setDistance(double inches) {
 		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
-		this.ticks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (this.inches * RobotMap.K_TICKS_PER_INCH);
+		this.absoluteTickGoal = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (this.moveByInches * RobotMap.K_TICKS_PER_INCH);
 	}
 
 	@Override
 	protected void initialize() {
-		setDistance(inches);
+		setDistance(moveByInches);
 		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
-		finished = false;
 		
 		System.out.println("ANGLE: " + Robot.driveSubsystem.getGyroAngle());
 
-		System.out.println("REQUIRED TICKS: " + ticks);
+		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.driveSubsystem.drive(power, power, power, power);
 	}
 
@@ -61,8 +91,10 @@ public class StraightDrive extends Command {
 		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		
 		int delta = currTicks - prevTicks;
-		if (Math.abs(ticks - (currTicks + delta)) < RobotMap.K_ENCODER_THRESHOLD) { // Math.abs() allows this to work regardless of driving direction (forwards or backwards)
-			if (inches > 0) tempPower = SLOW_POWER;
+		
+		/* If the robot has exceeded the threshold below, it will move at a slower power */
+		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_THRESHOLD) { // Math.abs() allows this to work regardless of driving direction (forwards or backwards)
+			if (moveByInches > 0) tempPower = SLOW_POWER;
 			else tempPower = -SLOW_POWER;
 		}
 		Robot.driveSubsystem.drive(tempPower,tempPower,tempPower,tempPower);
@@ -76,15 +108,15 @@ public class StraightDrive extends Command {
 	@Override
 	protected boolean isFinished() {
 		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
-		if (this.inches > 0) return (ticks < currTicks);
-		else return (ticks > currTicks);
+		if (this.moveByInches > 0) return (absoluteTickGoal < currTicks);
+		else return (absoluteTickGoal > currTicks);
 	}
 
 	@Override
 	protected void end() {
 		System.out.println(power);
 		System.out.println("----------------");
-		System.out.println("REQUIRED TICKS: " + ticks);
+		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.driveSubsystem.printEncoders();		
 		System.out.println("Difference: " + Robot.driveSubsystem.encoderDifference());
 		
