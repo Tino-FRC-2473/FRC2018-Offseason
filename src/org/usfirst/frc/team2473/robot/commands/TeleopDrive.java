@@ -10,6 +10,9 @@ package org.usfirst.frc.team2473.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 
+/**
+ * A class that sets the talons to specific powers upon current joystick positions
+ */
 public class TeleopDrive extends Command {
 	
 	public TeleopDrive() {
