@@ -7,42 +7,34 @@
 
 package org.usfirst.frc.team2473.robot;
 
-import java.util.ArrayList;
-
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
-import org.usfirst.frc.team2473.robot.commands.PointTurn;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
-import org.usfirst.frc.team2473.robot.commands.StallExperiment;
-import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 	
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
-		
-	public static OI oi;
 	
+	public static OI oi;
 
 	Preferences prefs;
 
-
+	/**
+	 * Runs once when the robot turns on
+	 */
 	@Override
 	public void robotInit() {
 		oi = new OI();
 		
 		prefs = Preferences.getInstance();
-		
+				
 		UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
 		cubeCam.setBrightness(75);
 		cubeCam.setResolution(640, 480);
@@ -50,11 +42,12 @@ public class Robot extends TimedRobot {
 		driveCam.setBrightness(75);
 		driveCam.setResolution(640, 480);
 		
-		
 		Devices.getInstance().getNavXGyro().reset();
 	}
 	
-
+	/**
+	 * Runs once each time the robot is set to disabled
+	 */
 	@Override
 	public void disabledInit() {
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
@@ -62,11 +55,17 @@ public class Robot extends TimedRobot {
 		
 	}
 
+	/**
+	 * Runs continuously while the robot is in the disabled state
+	 */
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
+	/**
+	 * Runs once before the autonomous state
+	 */
 	@Override
 	public void autonomousInit() {
 		driveSubsystem.resetEncoders();
@@ -81,17 +80,25 @@ public class Robot extends TimedRobot {
 
 	}
 
+	/**
+	 * Runs continuously during the autonomous state
+	 */
 	@Override
 	public void autonomousPeriodic() {		
 		Scheduler.getInstance().run();
 	}
 
+	/**
+	 * Runs once before the teleop state
+	 */
 	@Override
 	public void teleopInit() {
 		(new TeleopDrive()).start();
 	}
 
-
+	/**
+	 * Runs continuously during the teleop state
+	 */
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
